@@ -9,4 +9,4 @@ installation:
         2. We are going to host mongoDB on Atlas which is cloud service.	
         3. Compass-GUI for mongoDb
             1. TO connect to that DB(2) to our local machine we used compass.
-    4. Visual Studio  
+    4. Visual Studio   
