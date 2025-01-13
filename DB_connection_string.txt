@@ -1,0 +1,3 @@
+connection string: mongodb+srv://quick_chat_app:IxxVvfJgHEucwWQx@cluster0.98a5a.mongodb.net/
+username:quick_chat_app
+password:IxxVvfJgHEucwWQx
