@@ -49,6 +49,7 @@ router.post('/login',async(req,res)=>{
                 message:'User is not registered..',
                 success:false
             })
+            
         }
 
         //2.check password is correct
