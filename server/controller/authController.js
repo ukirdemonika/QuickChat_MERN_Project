@@ -44,12 +44,13 @@ router.post('/login',async(req,res)=>{
     try{
         //1.Check if user is exist according email
         const user=await User.findOne({email:req.body.email});
+       
         if(!user){
             return res.send({
                 message:'User is not registered..',
                 success:false
             })
-            
+
         }
 
         //2.check password is correct
