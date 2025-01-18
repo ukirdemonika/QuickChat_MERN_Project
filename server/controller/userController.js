@@ -24,4 +24,26 @@ router.get('/get_logged_users',authMiddleware,async(req,res)=>{
 
 
 })
+
+router.get('/get_all_users',authMiddleware,async(req,res)=>{
+try{
+    //find all users except loggsed in users
+    //so used $ne is a mongoDB not equal to operator
+    //req.body.userId is a logged in user which is come from  authmiddlaware
+    //got all users which is authenticated(token is there) but not logged in.
+    const allUsers=await User.find({_id:{$ne:req.body.userId}});
+
+    res.send({
+        message:'All users fetch successfully..',
+        success:true,
+        data:allUsers
+    })
+
+}catch(error){
+    res.send({
+        message:error.message,
+        success:false
+    })
+}
+})
 module.exports=router;
