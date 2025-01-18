@@ -1,0 +1,44 @@
+# Node modules
+node_modules/
+
+# Log files
+*.log
+npm-debug.log*
+
+# Environment variables (e.g., .env files)
+.env
+
+# Dependency directories
+bower_components/
+
+# OS-specific files
+.DS_Store        # macOS file
+Thumbs.db        # Windows file
+
+# IDEs and text editors files
+.vscode/          # Visual Studio Code settings
+.idea/            # JetBrains IDEs settings
+*.sublime-project
+*.sublime-workspace
+
+# npm package lock file (if you don't want to track it)
+package-lock.json
+
+# Build and production files
+/dist/
+build/
+*.tgz
+
+# Coverage folder for test coverage reports
+coverage/
+
+# Yarn lock file (if you're using Yarn)
+yarn.lock
+
+# Optional: If you're using logs or data
+*.pid
+*.log.*
+
+# Temporary or generated files
+*.swp
+*.bak
