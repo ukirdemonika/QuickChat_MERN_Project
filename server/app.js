@@ -4,7 +4,7 @@ const app=express(); // we call the method and its return object, and it will be
 
 const authRouter=require('./controller/authController');
 const userRouter=require('./controller/userController');
-
+const chatRouter=require('./controller/chatController');
 
 //use auth controller router
 app.use(express.json());  // this is middleware ,it is use to convert req body(coming from api) which is in json to javascript object
@@ -12,5 +12,6 @@ app.use(express.json());  // this is middleware ,it is use to convert req body(c
 app.use('/api/auth',authRouter);   // now url become- root_url/api/auth/signUp ig authrouter contain login then value will be root_url/api/auth/login
 
 app.use('/api/user',userRouter);
+app.use('/api/chat',chatRouter);
 module.exports=app;   //export app object
 

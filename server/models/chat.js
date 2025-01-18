@@ -1,10 +1,10 @@
 const mongoose=require('mongoose');
 
 const chatSchema=new mongoose.Schema({
-    message:{
+    members:{
         //here store the object of 2 objectId who are going to chat and the collection is users.
         type:[
-            {type:mongoose.Schema.Types.ObjectId, ref:'users'}
+           { type:mongoose.Schema.Types.ObjectId, ref:'users'}
         ]
     },
     lastMessage:{
