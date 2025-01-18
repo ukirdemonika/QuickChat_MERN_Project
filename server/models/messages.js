@@ -10,7 +10,7 @@ const messageSchema=new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,ref:'users'
     },
     text:{
-        type:string,
+        type:String,
         required:true
     },
     read:{
