@@ -8,13 +8,14 @@ router.get('/get_logged_users',authMiddleware,async(req,res)=>{
     try{
         const user=await User.findOne({_id:req.body.userId})// filter userId on the basis of _id property of User.
         console.log(req)
+        //bydefault all status code 200 OK
         res.send({
             message:'User fetch successfully',
             success:true,
             data:user
         })
     }catch(error){
-        res.send({
+        res.status(400).send({
             message:error.message,
             success:false,
             
@@ -40,7 +41,7 @@ try{
     })
 
 }catch(error){
-    res.send({
+    res.status(400).send({
         message:error.message,
         success:false
     })

@@ -26,7 +26,7 @@ router.post('/signUp',async(req,res)=>{
         //4. create new user and save into DB and send response
         const newUser=await new User(req.body);
         newUser.save();
-        res.send({
+        res.status(201).send({
             message:'User created successfully..',
             success:true  // set the status of res
         })
@@ -46,7 +46,7 @@ router.post('/login',async(req,res)=>{
         const user=await User.findOne({email:req.body.email});
        
         if(!user){
-            return res.send({
+            return res.status(400).send({
                 message:'User is not registered..',
                 success:false
             })
@@ -56,7 +56,7 @@ router.post('/login',async(req,res)=>{
         //2.check password is correct
        const isValid=await bcrypt.compare(req.body.password,user.password)    //req.body.pass: text password and User.pass: encrypted password, its return true OR false
         if(!isValid){
-            return res.send({
+            return res.status(400).send({
             message:'Invalid password',
             success:false
         })
@@ -64,14 +64,14 @@ router.post('/login',async(req,res)=>{
 
         //3. id user is exist and password is correct then send JWT token
         const token=jwt.sign({userId:user._id},process.env.SECRET_KEY,{expiresIn:'5D'})
-        res.send({
+        res.status(200).send({
             message:'login Successfully',
             success:true,
             token:token
         })
         
     }catch(error){
-        res.send({
+        res.status(400).send({
             message:error.message,
             success:false
         })
