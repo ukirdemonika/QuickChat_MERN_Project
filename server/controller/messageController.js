@@ -40,4 +40,22 @@ router.post('/new-messages',authMiddleware,async(req,res)=>{
         })
     }
 })
+
+// get all messages from chatId where login user chat with other users
+router.get('/get-all-messages/:chatId',authMiddleware,async(req,res)=>{
+    try{
+        //chatId coming from route, getting chatId from route and sort according to createAt property, ascending order
+        const allMessages=await Messages.find({chatId:req.params.chatId}).sort({createdAt:1});
+        res.send({
+            message:'Fetch all messages from chat successfully',
+            success:true,
+            data:allMessages
+        })
+    }catch(error){
+        res.status(400).send({
+            message:error.message,
+            success:false
+        })
+    }
+})
 module.exports=router;
