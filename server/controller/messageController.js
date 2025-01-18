@@ -45,6 +45,7 @@ router.post('/new-messages',authMiddleware,async(req,res)=>{
 router.get('/get-all-messages/:chatId',authMiddleware,async(req,res)=>{
     try{
         //chatId coming from route, getting chatId from route and sort according to createAt property, ascending order
+        //get all the messages from the chatId which contain sender send the messages, you can see the recever id in chat collection
         const allMessages=await Messages.find({chatId:req.params.chatId}).sort({createdAt:1});
         res.send({
             message:'Fetch all messages from chat successfully',
