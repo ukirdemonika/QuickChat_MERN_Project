@@ -16,6 +16,6 @@ const messageSchema=new mongoose.Schema({
     read:{
         type:Boolean
     }
-})
+},{timestamps:true})
 module.exports=mongoose.model('messages',messageSchema)
 // now this model is used for sending mesage API
