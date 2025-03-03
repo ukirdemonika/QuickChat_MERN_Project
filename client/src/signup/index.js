@@ -1,6 +1,7 @@
 import { useState } from "react";
 import './signUp.css';
 import { Link } from "react-router-dom";
+import { signUpUser } from "../apicalls/auth";
 
 function Signup() {
     const [user, setUser]=useState({
@@ -11,10 +12,22 @@ function Signup() {
         password:''
     });
 
-    function onFormSubmit(event){
+    async function onFormSubmit(event){
         event.preventDefault();
-        console.log(user);
+        let response=null;
+        try{
+            response=await signUpUser(user);
+            if(response.success){
+                alert(response.message);
+            }else{
+                alert(response.message);
+            }
+        }catch(error){
+            alert(response.message);
+        }
+       
     }
+
     return (
         <div className="container background-image ">
             <div className="container-back-color">
