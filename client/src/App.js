@@ -7,20 +7,14 @@ import Signup from "./signup";
 function App() {
   return (
     // Add routing functionality
-   
+
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={
-          <Home />
-        }>
+        <Route path="/" element={<Home />}>
         </Route>
-        <Route path="/login" element={
-          <Login />
-        }>
+        <Route path="/login" element={<Login />}>
         </Route>
-        <Route path="/signup" element={
-         <Signup />
-        }>
+        <Route path="/signup" element={<Signup />}>
         </Route>
       </Routes>
     </BrowserRouter>

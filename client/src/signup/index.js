@@ -1,5 +1,6 @@
 import { useState } from "react";
 import './signUp.css';
+import { Link } from "react-router-dom";
 
 function Signup() {
     const [user, setUser]=useState({
@@ -27,12 +28,12 @@ function Signup() {
                         <div className="column">
                             
                             <input
-                                type="text" alt="firstname" placeholder="Enter Firstname.."
+                                type="text" alt="firstname" placeholder="Firstname.."
                                 value={user.firstName}
                                 //all value from user and get the value of firstname
                                 onChange={(e)=>setUser({...user,firstName:e.target.value})}></input>
                             <input
-                                type="text" alt="lastname" placeholder="Enter Lastname.."
+                                type="text" alt="lastname" placeholder="Lastname.."
                                 value={user.lastName}
                                 onChange={(e)=>setUser({...user,lastName:e.target.value})}></input>
 
@@ -42,11 +43,11 @@ function Signup() {
                         {/* email and password */}
                         <div className="email-column">
                             <input
-                                type="email" alt="Email" placeholder="Enter Email.."
+                                type="email" alt="Email" placeholder="Email.."
                                 value={user.email}
                                 onChange={(e)=>setUser({...user,email:e.target.value})}></input>
                             <input
-                                type="password" alt="Password" placeholder="Enter Password.."
+                                type="password" alt="Password" placeholder="Password.."
                                 value={user.password}
                                 onChange={(e)=>setUser({...user,password:e.target.value})}></input>
                         </div>
@@ -58,16 +59,13 @@ function Signup() {
                         </form>
                         <div className="card-terms">
                             <p>Already have an account?</p>
-                            <p className="p-login">Login Here</p>
+                            <Link className="p-login" to="/login">Login Here</Link>
                         </div>
                         
                     </div>
                 </div>
             </div>
         </div>
-
-
-
 
     )
 }
