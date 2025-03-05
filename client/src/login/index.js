@@ -17,6 +17,8 @@ function Login(){
                response=await loginUser(user);
                if(response.success){
                    alert(response.message);
+                   localStorage.setItem('token',response.token);
+                   window.location.href='/';
                }else{
                    alert(response.message);
                }
