@@ -44,7 +44,7 @@ router.post('/login',async(req,res)=>{
     try{
         //1.Check if user is exist according email
         const user=await User.findOne({email:req.body.email});
-       
+       console.log(user)
         if(!user){
             return res.status(400).send({
                 message:'User is not registered..',
@@ -63,7 +63,7 @@ router.post('/login',async(req,res)=>{
     }
 
         //3. id user is exist and password is correct then send JWT token
-        const token=jwt.sign({userId:user._id},process.env.SECRET_KEY,{expiresIn:'5D'})
+        const token=jwt.sign({userId:user._id},process.env.SECRET_KEY,{expiresIn:"5D"})
         res.status(200).send({
             message:'login Successfully',
             success:true,

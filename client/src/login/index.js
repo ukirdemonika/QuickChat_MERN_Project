@@ -1,18 +1,30 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { loginUser } from "../apicalls/auth";
 
 
 function Login(){
-    let[user,setUser]=useState({
+    const [user,setUser]=useState({
         //in req body of bckend required email and password.
-        email:'',
-        password:''
+        email:"",
+        password:""
     })
 
-    function onFormSubmit(event){
-        event.preventDefault();
-        console.log(user);
-    }
+   async function onFormSubmit(event){
+           event.preventDefault();
+           let response=null;
+           try{
+               response=await loginUser(user);
+               if(response.success){
+                   alert(response.message);
+               }else{
+                   alert(response.message);
+               }
+           }catch(error){
+               alert(response.message);
+           }
+          
+       }
     return (
         <div className="container background-image ">
             <div className="container-back-color">

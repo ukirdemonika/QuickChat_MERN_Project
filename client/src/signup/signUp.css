@@ -1,6 +1,6 @@
 .container {
-    @apply relative h-screen bg-cover;
-
+    @apply relative h-screen bg-cover ;
+    max-width: 100%;
 }
 
 .background-image {
