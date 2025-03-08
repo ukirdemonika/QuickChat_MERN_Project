@@ -4,6 +4,7 @@ import Home from "./home";
 import Login from "./login";
 import Signup from "./signup";
 import { Toaster } from "react-hot-toast";
+import ProtectedRoute from "./components/protectedRoute";
 
 function App() {
   return (
@@ -12,7 +13,10 @@ function App() {
       {/* Add routing functionality */}
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />}>
+        <Route path="/" element={
+          <ProtectedRoute>  {/*  Protect the home component, means only logged in user navigate to home page.*/ }
+          <Home />
+          </ProtectedRoute>}>
         </Route>
         <Route path="/login" element={<Login />}>
         </Route>
