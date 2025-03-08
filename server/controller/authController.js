@@ -46,7 +46,7 @@ router.post('/login',async(req,res)=>{
         const user=await User.findOne({email:req.body.email});
        console.log(user)
         if(!user){
-            return res.status(400).send({
+            return res.send({
                 message:'User is not registered..',
                 success:false
             })
@@ -56,7 +56,7 @@ router.post('/login',async(req,res)=>{
         //2.check password is correct
        const isValid=await bcrypt.compare(req.body.password,user.password)    //req.body.pass: text password and User.pass: encrypted password, its return true OR false
         if(!isValid){
-            return res.status(400).send({
+            return res.send({
             message:'Invalid password',
             success:false
         })
@@ -71,7 +71,7 @@ router.post('/login',async(req,res)=>{
         })
         
     }catch(error){
-        res.status(400).send({
+        res.send({
             message:error.message,
             success:false
         })
