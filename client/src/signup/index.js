@@ -25,8 +25,7 @@ function Signup() {
             }
         }catch(error){
             toast.error(response.message);
-        }
-       
+        }  
     }
 
     return (
