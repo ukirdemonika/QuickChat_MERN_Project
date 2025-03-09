@@ -20,8 +20,8 @@ let userSchema=new mongoose.Schema({
     password:{
         type:String,
         required:true,
-        select:false, // is res do not send password
-        minlength:8
+        // select:false, // is res do not send password
+        // minlength:8
     },
     proflePic:{
         type:String,
