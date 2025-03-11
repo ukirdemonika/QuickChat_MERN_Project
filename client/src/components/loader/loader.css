@@ -1,0 +1,24 @@
+/* inset-0  = covers entire screen 
+    z-50    = element places high stacking order. top of almost everything*/
+.loader-overlay{
+    @apply fixed inset-0 bg-red-500 bg-opacity-70 flex justify-center items-center z-50;
+}
+.loader-spinner{
+    @apply w-20 h-20 border-[32px] border-white border-t-transparent border-b-transparent  rounded-full ;
+    animation: spin-slow 1.2s infinite;
+}
+/* keyFrames =create custom animation */
+@keyframes spin-slow{
+    0%{
+        transform: rotate(0);
+        animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+    }
+    50%{
+        transform: rotate(900deg);
+        animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1);
+    }
+    100%{
+        transform: rotate(1800deg);
+        
+    }
+}
