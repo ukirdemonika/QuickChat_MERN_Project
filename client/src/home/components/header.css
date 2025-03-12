@@ -1,0 +1,24 @@
+.app-header {
+    @apply flex flex-wrap w-full px-[10px] py-[30px] justify-between border-b border-gray-400
+}
+
+.app-logo {
+    @apply flex flex-nowrap text-[#28282B] text-[25px] font-bold
+}
+
+i {
+    @apply mx-2 my-1
+}
+
+.app-user-profile {
+    @apply flex
+}
+.logged-user-name{
+    @apply font-bold text-[#28282B] pt-2 pr-5 ml-4
+}
+.logged-user-profile-pic{
+    @apply w-[40px] h-[40px] rounded-full bg-red-600  text-center text-white font-bold text-lg leading-10 cursor-pointer
+}
+.logout-button{
+    @apply text-red-500 bg-transparent border-none text-[18px] cursor-pointer
+}

@@ -1,6 +1,13 @@
+import Header from "./components/header";
+import './index.css';
 function Home(){
     return (
-        <h2>This is home compoent</h2>
+        <div className="home-page">
+            <Header></Header>
+            <div className="main-content">
+
+            </div>
+        </div>
     )
 }
 export default Home;

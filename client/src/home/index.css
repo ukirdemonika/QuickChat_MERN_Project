@@ -1,0 +1,6 @@
+.home-page{
+    @apply bg-[#fdedec] flex flex-col min-h-screen;
+}
+.main-content{
+    @apply flex w-[90%] mx-auto my-2 p-2 flex-1;
+}
