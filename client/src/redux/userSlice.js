@@ -3,14 +3,16 @@ import { createSlice } from "@reduxjs/toolkit";
 const usersSlice=createSlice({
     name:'user',
     initialState:{
-        user:null
+        user:null,
+        allUsers:[]
     },
     //here action.payload contain user object which is coming from dispatch(res.data), dispatch means send the data to action and update the state.
     //setUser is same as setUser in useState() hook.
     reducers:({
-        setUser:(state,action)=>{state.user=action.payload;}
+        setUser:(state,action)=>{state.user=action.payload;},
+        setAllUsers:(state,action)=>{state.allUsers=action.payload}
     })
 })
-export const {setUser}=usersSlice.actions;
+export const {setUser,setAllUsers}=usersSlice.actions;
 export default usersSlice.reducer;
 

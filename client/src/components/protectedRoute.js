@@ -1,15 +1,17 @@
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { getLoggedInUsers } from "../apicalls/users";
+import { getAllUsers, getLoggedInUsers } from "../apicalls/users";
 import { useDispatch, useSelector } from "react-redux";
 import { hideLoader, showLoader } from "../redux/loaderSlice";
-import { setUser } from "../redux/userSlice";
+import { setUser ,setAllUsers} from "../redux/userSlice";
 import toast from "react-hot-toast";
 
 function ProtectedRoute({children}){
+    console.log("Children:", children);
     //step 3 dispatch the action which are going to update  in the store.
     // let[user,setUsers]=useState(null);
-    const { user } = useSelector(state => state.userReducer);
+    
+    // const { user } = useSelector(state => state.userReducer);
     const dispatch=useDispatch();
 
     const navigate=useNavigate();
@@ -33,11 +35,32 @@ function ProtectedRoute({children}){
             navigate('/login');
         }
     }
+
+    const getAllUsersFormDb=async()=>{
+        let response=null;
+        try{
+            dispatch(showLoader());
+            response=await getAllUsers();
+            dispatch(hideLoader());
+            if(response.success){
+                dispatch(setAllUsers(response.data))
+
+            }else{
+               
+                toast.error(response.message);
+                navigate('./login');
+            }
+        }catch(error){
+            dispatch(hideLoader());
+            navigate('./login');
+        }
+    }
     //this hook called first
     useEffect(()=>{
         if(localStorage.getItem('token')){
             //get the current user details
             getLoggedUsers();
+            getAllUsersFormDb();
         }else{
             navigate('/login')
         }

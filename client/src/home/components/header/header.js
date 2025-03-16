@@ -21,7 +21,7 @@ function Header(){
             </div>
             <div className="app-user-profile">
                 {/* <img className='logged-user-profile-pic'></img> */}
-                <div className='logged-user-profile-pic'>{getInitials()}</div>
+                {user && <div className='logged-user-profile-pic'>{getInitials()}</div>}
                 <div className='logged-user-name'>{getfullName()}</div>
                 <button className='logout-button'>
                 <i className="fa fa-power-off"></i>
