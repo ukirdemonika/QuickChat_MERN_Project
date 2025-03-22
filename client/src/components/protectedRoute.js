@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { getAllUsers, getLoggedInUsers } from "../apicalls/users";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch} from "react-redux";
 import { hideLoader, showLoader } from "../redux/loaderSlice";
 import { setUser ,setAllUsers} from "../redux/userSlice";
 import toast from "react-hot-toast";

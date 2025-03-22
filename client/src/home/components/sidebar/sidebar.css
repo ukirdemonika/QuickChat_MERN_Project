@@ -1,0 +1,3 @@
+.sidebar-container{
+    @apply w-[30%] px-0 py-[20px];
+}   
