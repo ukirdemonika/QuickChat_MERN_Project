@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom"
 import { getAllUsers, getLoggedInUsers } from "../apicalls/users";
 import { useDispatch} from "react-redux";
 import { hideLoader, showLoader } from "../redux/loaderSlice";
-import { setUser ,setAllUsers} from "../redux/userSlice";
+import { setUser ,setAllUsers,setAllChats} from "../redux/userSlice";
 import toast from "react-hot-toast";
+import { getAllChats } from "../apicalls/chat";
 
 function ProtectedRoute({children}){
     console.log("Children:", children);
@@ -55,12 +56,27 @@ function ProtectedRoute({children}){
             navigate('./login');
         }
     }
+
+    //get all the chats
+    const getAllChatsfromDb=async()=>{
+       
+        try{
+            const response=await getAllChats();
+            if(response.success){
+                //dispatch the event and store the response in allchat state which is in store so allchat is accessble in whole app.
+                dispatch(setAllChats(response.data));
+            }
+        }catch(error){
+            navigate('/login');
+        }
+    }
     //this hook called first
     useEffect(()=>{
         if(localStorage.getItem('token')){
             //get the current user details
             getLoggedUsers();
             getAllUsersFormDb();
+            getAllChatsfromDb();
         }else{
             navigate('/login')
         }
