@@ -1,14 +1,16 @@
+import { useSelector } from "react-redux";
 import Header from "./components/header/header";
-import Chat from "./components/sidebar/chat/chat";
+import ChatArea from "./components/sidebar/chat/chat";
 import Sidebar from "./components/sidebar/sidebar";
 import './index.css';
 function Home(){
+    const{selectedChat}=useSelector(state=>state.userReducer);
     return (
         <div className="home-page">
             <Header></Header>
             <div className="main-content">
                 <Sidebar></Sidebar>
-                <Chat></Chat>
+                {selectedChat && <ChatArea></ChatArea>}
             </div>
         </div>
     )
