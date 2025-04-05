@@ -3,7 +3,7 @@ import './userlist.css';
 import toast from "react-hot-toast";
 import { hideLoader, showLoader } from "../../../../redux/loaderSlice";
 import { createNewChat } from "../../../../apicalls/chat";
-import { setAllChats } from "../../../../redux/userSlice";
+import { setAllChats, setSelectedChat } from "../../../../redux/userSlice";
 
 function UserList({ searchKey }) {
     //create alise for user as a currentUser
@@ -11,6 +11,7 @@ function UserList({ searchKey }) {
     // console.log(allUsers)
     const dispatch=useDispatch();
     function formatName(user) {
+        
         let firstName = user?.firstName.charAt(0).toUpperCase() + user?.firstName.slice(1).toLowerCase();
         let lastName = user?.lastName.charAt(0).toUpperCase() + user?.lastName.slice(1).toLowerCase();
         return firstName + ' ' + lastName;
@@ -31,14 +32,31 @@ function UserList({ searchKey }) {
                 const updateWithNewChat=[...allChats,newChat] //this contain all members 
                 //update in the store, now allChats contain all the members who are doing chats.
                 dispatch(setAllChats(updateWithNewChat));
+                dispatch(setSelectedChat(newChat)); //open the chat with current user and search user id.
             }
         }catch(error){
             toast.error(response.message);
             dispatch(hideLoader())
         }
     }
+
+    //open selected chat with current user and search user id
+    const openSelectedChat=(selectedUser_Id)=>{
+        console.log(selectedUser_Id);
+        //find the chat which contain current user id and search user id, if chat is found then open the chat.
+        //allChats contain all the members who are doing chat, and selectedUser_Id is the id of search user.
+        const chat=allChats.find(chat=>chat.members.includes(selectedUser_Id) &&
+                                        chat.members.includes(currentUser._id));
+        if(chat){
+            //if chat is found then open the chat.
+            dispatch(setSelectedChat(chat));
+        }
+     
+    }
     return (
+        
         allUsers.filter(user =>
+         
             //filter thoose user which contain first or last name
             (
                 (user.firstName.toLowerCase().includes(searchKey.toLowerCase()) ||
@@ -48,7 +66,8 @@ function UserList({ searchKey }) {
             (allChats.some(chat=>chat.members.includes(user._id)))
         ).map(user => {
             //  <div className="user-search-filter">
-            return <div className="filtered-user">
+          
+            return <div className="filtered-user" onClick={()=>openSelectedChat(user._id)} key={user._id}>
                 <div className="filter-user-display">
                     {user.profilePic && <img src={user.profilePic} alt="Profile pic" className="user-profile-image" />}
                     {!user.profilePic && <div className="user-default-profile-pic">

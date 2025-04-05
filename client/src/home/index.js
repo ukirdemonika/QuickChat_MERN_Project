@@ -1,4 +1,5 @@
 import Header from "./components/header/header";
+import Chat from "./components/sidebar/chat/chat";
 import Sidebar from "./components/sidebar/sidebar";
 import './index.css';
 function Home(){
@@ -7,6 +8,7 @@ function Home(){
             <Header></Header>
             <div className="main-content">
                 <Sidebar></Sidebar>
+                <Chat></Chat>
             </div>
         </div>
     )
