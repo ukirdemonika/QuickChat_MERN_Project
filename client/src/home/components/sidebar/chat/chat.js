@@ -61,7 +61,16 @@ function ChatArea() {
                     {selectedUserChat.firstName} {selectedUserChat.lastName}
                 </div>
                 <div className='chat-area'>
-                    chat text
+                    {allMessages.map(msg => {
+                        
+                        let isCurrentUserSender= msg.sender === currentUser._id; //check if the current user is sender of the message.
+                        return <div className='message-container' style={isCurrentUserSender?{justifyContent:'end'}:{justifyContent:'start'}} >
+                            <div className={isCurrentUserSender?"send-message":"receive-message"}>
+                                {msg.text}
+                            </div>
+                        </div>
+                    })
+                    }
                 </div>
                 <div className='send-message-div'>
                     <input type='text' className='send-message-input' placeholder='Type a message...'

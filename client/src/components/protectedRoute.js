@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import { getAllChats } from "../apicalls/chat";
 
 function ProtectedRoute({children}){
-    console.log("Children:", children);
+    // console.log("Children:", children);
     //step 3 dispatch the action which are going to update  in the store.
     // let[user,setUsers]=useState(null);
     

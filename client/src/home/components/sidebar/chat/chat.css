@@ -1,5 +1,5 @@
 .chat-area{
-    @apply flex flex-col w-[70%] h-[75vh] bg-white rounded-[10px]  px-[20px] py-[30px] ml-[20px] mt-[20px] shadow-lg;
+    @apply flex flex-col w-[90%] h-[75vh] bg-white rounded-[10px]  px-[20px] py-[30px] ml-[20px] mt-[20px];
     /* @media (max-width:1000px) { */
         /* @apply w-[100%] h-[100vh] bg-white rounded-[10px]  px-[20px] py-[30px] ml-[20px] mt-[20px] shadow-lg; */
  
@@ -16,4 +16,16 @@
 }
 .send-message-btn{
     @apply absolute right-[20px] text-[#e74c3c] bg-transparent border-none cursor-pointer text-[20px] pt-[8px];
+}
+.message-container{
+    @apply flex;
+}
+.send-message,.receive-message{
+    @apply px-[10px] py-[5px] rounded-[10px] mt-[5px] text-[14px] w-fit
+}
+.send-message{
+    @apply bg-red-600 text-white rounded-tl-[0px] rounded-tr-[0px] ml-[10px]
+}
+.receive-message{
+    @apply bg-[#ddd] text-[#28282B] rounded-tl-[0px] rounded-tr-[0px] mr-[10px]
 }
