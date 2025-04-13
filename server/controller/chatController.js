@@ -1,6 +1,7 @@
 const router=require('express').Router();
 const authMiddleware = require('../middlewares/authMiddleware');
 const Chat=require('../models/chat');
+const Messages=require('../models/messages');
 
 router.post('/create_chat_between_members',authMiddleware ,async(req,res)=>{
     try{
@@ -25,7 +26,10 @@ router.post('/create_chat_between_members',authMiddleware ,async(req,res)=>{
 router.get('/get_all_chats',authMiddleware,async(req,res)=>{
     try{
         //so in postman when we hit url , from authentication token get the userId and attched to req body(logged in user).
-        const allChat=await Chat.find({members:{$in:req.body.userId}}).populate('members').sort({updatedAt:-1});  //in is a mongoose operator. filter the data base on members array and check currently logged in user
+        const allChat=await Chat.find({members:{$in:req.body.userId}})
+                        .populate('members')
+                        .populate('lastMessage')
+                        .sort({updatedAt:-1});  //in is a mongoose operator. filter the data base on members array and check currently logged in user
         res.send({
             message:'fetch chat Successfully..',
             success:true,

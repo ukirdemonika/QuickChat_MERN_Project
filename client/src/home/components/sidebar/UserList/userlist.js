@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { hideLoader, showLoader } from "../../../../redux/loaderSlice";
 import { createNewChat } from "../../../../apicalls/chat";
 import { setAllChats, setSelectedChat } from "../../../../redux/userSlice";
+import moment from "moment";
 
 function UserList({ searchKey }) {
     //create alise for user as a currentUser
@@ -63,6 +64,27 @@ function UserList({ searchKey }) {
         return false;
         
     }
+
+    const getlastMessages=(userId)=>{
+        
+        const chat=allChats.find(chat=>chat.members.map(m=>m._id).includes(userId));//find the chat which contain current user id and search user id.
+        if(!chat || !chat.lastMessage){
+            return ''
+        }else{
+            //if chat is found then check if the last message is sent by current user or not.
+           //if last message is sent by current user then return 'You' else return the last message.
+            const msgPrefix=chat?.lastMessage?.sender === currentUser._id ? 'You: ':'';
+            return msgPrefix+chat?.lastMessage?.text?.substring(0,25);
+        }
+    }
+    const getMessageTimeStamp=(userId)=>{
+        const chat=allChats.find(chat=>chat.members.map(m=>m._id).includes(userId));//find the chat which contain current user id and search user id.
+        if(!chat || !chat.lastMessage){
+            return ''
+        }else{
+           return moment(chat?.lastMessage?.createdAt).format('hh:mm A');//if chat is found then return the last message timestamp.
+        }
+    }
     return (
 
         allUsers.filter(user =>
@@ -92,8 +114,10 @@ function UserList({ searchKey }) {
                                     formatName(user)
                                 }
                             </div>
-                            <div className="user-display-email">{user.email}</div>
+                            <div className="user-display-email">{getlastMessages(user._id) || user.email}</div>
+                           
                         </div>
+                        <div className="message-timestamp">{getMessageTimeStamp(user._id)}</div>
                         {!allChats.find(chat => chat.members.map(m => m._id).includes(user._id)) &&
                             <div className="user-start-chat">
                                 <button className="user-start-chart-btn"

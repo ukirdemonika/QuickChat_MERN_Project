@@ -36,6 +36,9 @@
 .selected-user{
     @apply border-b-2 text-white bg-red-600 p-[10px]  
 }
+.message-timestamp{
+    @apply text-[13px];
+}
 
 
 
