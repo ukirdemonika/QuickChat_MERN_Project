@@ -1,0 +1,9 @@
+.user-search-area{
+    @apply mb-5 relative
+}
+.user-search-text{
+    @apply w-full rounded-[20px] px-[20px] py-[10px] text-["28282B"] border border-[#ddd] 
+}
+.user-search-button{
+    @apply text-[25px] absolute top-1 right-[10px] text-[#e74c3c]
+}

@@ -1,0 +1,41 @@
+.filtered-user{
+    @apply border-b-2 text-[28282B] bg-white p-[10px]  
+}
+.filter-user-display{
+    @apply flex flex-wrap;
+}
+/* @media (max-width:1000px) {
+    .filter-user-display{
+        @apply flex flex-wrap;
+    }
+} */
+.user-default-profile-pic{
+    @apply bg-red-600 rounded-full w-[50px] h-[50px] text-white text-center leading-[50px] font-bold 
+}
+.user-selected-profile-pic{
+    @apply bg-white rounded-full w-[50px] h-[50px] text-red-600 text-center leading-[50px] font-bold 
+}
+.filter-user-details{
+    @apply w-[60%]
+}
+.user-display-name{
+    @apply font-bold px-[20px] py-[1px] text-[16px];
+}
+.user-display-email{
+    @apply px-[20px] py-[1px] text-[12px];
+}
+.user-start-chat{
+    @apply px-[0px] py-[10px] max-[1000px]:hidden
+}
+.user-start-chart-btn{
+    @apply px-[5px] py-[5px] bg-red-600 border-none rounded-[3px] text-white
+}
+.user-profile-image{
+    @apply w-[50%] h-[50%] rounded-[50%] text-[22px] font-bold text-center leading-[50px];
+}
+.selected-user{
+    @apply border-b-2 text-white bg-red-600 p-[10px]  
+}
+
+
+
