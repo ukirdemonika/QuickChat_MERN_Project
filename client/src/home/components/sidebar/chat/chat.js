@@ -4,6 +4,7 @@ import './chat.css';
 import { createNewMessage, getAllMessages } from "../../../../apicalls/messages";
 import { showLoader, hideLoader } from "../../../../redux/loaderSlice";
 import toast from 'react-hot-toast';
+import moment from 'moment';
 function ChatArea() {
     const { selectedChat, user: currentUser } = useSelector(state => state.userReducer);
     //chat is selected chat, and user is current user.
@@ -48,6 +49,19 @@ function ChatArea() {
             toast.error(response.message);
         }
     }
+    function formatTime(timestamp){
+       
+        const now = moment().startOf('day'); // Get the start of the current day
+        const diff = now.diff(moment(timestamp).startOf('day'), 'days'); // Get the difference in days
+        if(diff < 1){
+            return `Today ${moment(timestamp).format('hh:mm A')}`; //if difference is less than 1 day, then show time in hh:mm A format.
+        }
+        else if(diff === 1){
+            return `Yesterday ${(moment(timestamp).format('hh:mm A'))}`; //if difference is 1 day, then show Yesterday.
+        }else{
+            return moment(timestamp).format('MMM D hh:mm A'); //if difference is more than 1 day, then show date in MMM hh:mm A format.
+        }
+    }
     //get all messages from db when selected chat is changed & initially when page load.
     //selected chat is the chat which is selected by the user.
     useEffect(() => {
@@ -56,17 +70,22 @@ function ChatArea() {
 
     return (
         <>
-            {selectedChat && <div className='chat-area'>
+            {selectedChat && <div className='chat-container'>
                 <div className='chat-header'>
                     {selectedUserChat.firstName} {selectedUserChat.lastName}
                 </div>
                 <div className='chat-area'>
                     {allMessages.map(msg => {
-                        
-                        let isCurrentUserSender= msg.sender === currentUser._id; //check if the current user is sender of the message.
-                        return <div className='message-container' style={isCurrentUserSender?{justifyContent:'end'}:{justifyContent:'start'}} >
-                            <div className={isCurrentUserSender?"send-message":"receive-message"}>
-                                {msg.text}
+
+                        let isCurrentUserSender = msg.sender === currentUser._id; //check if the current user is sender of the message.
+                        return <div className='message-container' style={isCurrentUserSender ? { justifyContent: 'end' } : { justifyContent: 'start' }} >
+                            <div className='message-area'>
+                                <div className={isCurrentUserSender ? "send-message" : "receive-message"}>
+                                    {msg.text}
+                                </div>
+                                <div style={isCurrentUserSender? {float:'right'}:{float:'left'}} className='message-time'>
+                                    {formatTime(msg.createdAt)}
+                                </div>
                             </div>
                         </div>
                     })

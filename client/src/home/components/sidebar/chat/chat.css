@@ -1,31 +1,73 @@
-.chat-area{
-    @apply flex flex-col w-[90%] h-[75vh] bg-white rounded-[10px]  px-[20px] py-[30px] ml-[20px] mt-[20px];
+.chat-container {
+    @apply flex flex-col w-[70%] h-[75vh] bg-white rounded-[10px] px-[20px] py-[30px] 
+    ml-[20px] mt-[20px]  max-[1000px]:w-[90%] 
     /* @media (max-width:1000px) { */
-        /* @apply w-[100%] h-[100vh] bg-white rounded-[10px]  px-[20px] py-[30px] ml-[20px] mt-[20px] shadow-lg; */
- 
-}
-.chat-header{
-    @apply text-right font-bold text-red-600 mb-[20px] border-b-2 px-[10px] py-[20px]
-}
-.send-message-div{
-    @apply relative pt-[20px];
-}
-.send-message-input{
-    @apply w-[100%] h-[40px] p-2 rounded-[5px] text-[#28282B]  border-[#ddd] border-solid
+    /* @apply w-[100%] h-[100vh] bg-white rounded-[10px]  px-[20px] py-[30px] ml-[20px] mt-[20px] shadow-lg; */
 
 }
-.send-message-btn{
+/*****************************************************
+***********CUSTOM SCROLLBAR FOR CHATAREA**************
+******************************************************/
+.chat-area{
+    @apply overflow-y-scroll flex-1 px-[10px] py-[20px]
+}
+.chat-area::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  /* Track */
+  .chat-area::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 2px grey; 
+    border-radius: 10px;
+  }
+  
+  /* Handle */
+  .chat-area::-webkit-scrollbar-thumb {
+    background: #e74c3c; 
+    border-radius: 10px;
+  }
+  
+  /* Handle on hover */
+  .chat-area::-webkit-scrollbar-thumb:hover {
+    background: #e74c3c; 
+  }
+  
+.chat-header {
+    @apply text-right font-bold text-red-600 mb-[20px] border-b-2 px-[10px] py-[20px]
+}
+
+.send-message-div {
+    @apply relative pt-[20px];
+}
+
+.send-message-input {
+    @apply w-[100%] h-[40px] p-2 rounded-[5px] text-[#28282B] border-[#ddd] border-solid
+}
+
+.send-message-btn {
     @apply absolute right-[20px] text-[#e74c3c] bg-transparent border-none cursor-pointer text-[20px] pt-[8px];
 }
-.message-container{
+
+.message-container {
     @apply flex;
 }
-.send-message,.receive-message{
+.message-area{
+    @apply mt-[10px];
+}
+
+.send-message, .receive-message {
     @apply px-[10px] py-[5px] rounded-[10px] mt-[5px] text-[14px] w-fit
 }
-.send-message{
-    @apply bg-red-600 text-white rounded-tl-[0px] rounded-tr-[0px] ml-[10px]
+
+.send-message {
+    @apply bg-red-600 text-white rounded-tr-[0px] ml-[10px]
 }
-.receive-message{
-    @apply bg-[#ddd] text-[#28282B] rounded-tl-[0px] rounded-tr-[0px] mr-[10px]
+
+.receive-message {
+    @apply bg-[#ddd] text-[#28282B] rounded-bl-[0px] mr-[10px]
 }
+
+.message-time {
+    @apply w-fit text-[13px];
+}
+

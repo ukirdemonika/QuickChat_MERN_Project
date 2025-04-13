@@ -2,6 +2,6 @@
     @apply bg-[#fdedec] flex flex-col min-h-screen;
 }
 .main-content{
-    @apply flex  mx-2  my-2 p-2 flex-1 
+    @apply flex  ml-[10px] mr-[10px]  my-2 p-2 flex-1 
 }
 
