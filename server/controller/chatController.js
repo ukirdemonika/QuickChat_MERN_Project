@@ -1,7 +1,10 @@
 const router=require('express').Router();
+const express = require('express');
 const authMiddleware = require('../middlewares/authMiddleware');
 const Chat=require('../models/chat');
 const Messages=require('../models/messages');
+
+router.use(express.json()); // Middleware to parse JSON request bodies
 
 router.post('/create_chat_between_members',authMiddleware ,async(req,res)=>{
     try{
@@ -36,6 +39,51 @@ router.get('/get_all_chats',authMiddleware,async(req,res)=>{
             data:allChat
         })
 
+    }catch(error){
+        res.send({
+            message:error.message,
+            success:false
+        })
+    }
+})
+
+router.post('/clear-unread-message',authMiddleware,async(req,res)=>{
+    try{
+        //1. update the unread message count to 0
+        const chatId=req.body.chatId; //get chatId from req body
+        const chat=await Chat.findById(chatId); //find the chatId from chat collection
+        if (!chat) {
+            res.send({
+                message: 'No chat found with given chatId',
+                success: false
+            });
+        }
+
+    
+
+        const updateChat=await Chat.findByIdAndUpdate(
+            chatId,//filter the chatId from chat collection
+            //{unReadMessageCount:0}, //update the unread message count to 0
+            {
+                unReadMessageCount:0
+            },
+            {
+                new:true //return the updated data , if Chat updated successfully, otherwise return new:false.
+            }
+            
+        ).populate('members').populate('lastMessage') //populate the members and last message from chat collection
+        
+        //2.update the read property of message collection to true
+        await Messages.updateMany(
+            {chatId:chatId,read:false}, //find the chatId from message collection
+            {read:true} //update the isRead property to true
+        )
+
+        res.send({
+            message:'Unread message count is cleared successfully',
+            success:true,
+            data:updateChat //return the updated chat data
+        })
     }catch(error){
         res.send({
             message:error.message,

@@ -14,7 +14,8 @@ const messageSchema=new mongoose.Schema({
         required:true
     },
     read:{
-        type:Boolean
+        type:Boolean,
+        default: false
     }
 },{timestamps:true})
 module.exports=mongoose.model('messages',messageSchema)

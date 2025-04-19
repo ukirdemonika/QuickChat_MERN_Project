@@ -5,8 +5,10 @@ import { createNewMessage, getAllMessages } from "../../../../apicalls/messages"
 import { showLoader, hideLoader } from "../../../../redux/loaderSlice";
 import toast from 'react-hot-toast';
 import moment from 'moment';
+import { clearUnreadMessageCount } from '../../../../apicalls/chat';
+import { setSelectedChat } from '../../../../redux/userSlice';
 function ChatArea() {
-    const { selectedChat, user: currentUser } = useSelector(state => state.userReducer);
+    const { selectedChat, user: currentUser ,allChats} = useSelector(state => state.userReducer);
     //chat is selected chat, and user is current user.
     //selectedUserChat is the chat which is selected by the user, and it is the member of the selected chat.
     const selectedUserChat = selectedChat.members.find(m => m._id !== currentUser._id);//get chat object of selected user. 
@@ -62,10 +64,32 @@ function ChatArea() {
             return moment(timestamp).format('MMM D hh:mm A'); //if difference is more than 1 day, then show date in MMM hh:mm A format.
         }
     }
+
+    //clear the unread message count when user open the chat.
+    async function clearUnReadMessage(){
+        let response=null;
+        try{
+            dispatch(showLoader());
+           response = await clearUnreadMessageCount(selectedChat._id);
+           dispatch(hideLoader());
+           if(response.success){
+            allChats.map(chat=>{
+                if(chat._id === selectedChat._id){ //check if chat id is same as selected chat id.
+                    setSelectedChat(response.data); //update the selected chat with new data.
+                }
+                return chat;//return chat object.
+            })
+           }
+        }catch(error){
+            dispatch(hideLoader());
+            toast.error(response.message);
+        }
+    }
     //get all messages from db when selected chat is changed & initially when page load.
     //selected chat is the chat which is selected by the user.
     useEffect(() => {
-        getAllMessagesFromDB();
+        getAllMessagesFromDB(); //
+        clearUnReadMessage();//clear the unread message count when user open the chat.
     }, [selectedChat]); //when selected chat is changed, then get all messages from db.
 
     return (
