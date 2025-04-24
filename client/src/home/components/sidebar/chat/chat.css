@@ -1,6 +1,6 @@
 .chat-container {
     @apply flex flex-col w-[70%] h-[75vh] bg-white rounded-[10px] px-[20px] py-[30px] 
-    ml-[20px] mt-[20px]  max-[1000px]:w-[90%] 
+     max-[1000px]:w-[90%] 
     /* @media (max-width:1000px) { */
     /* @apply w-[100%] h-[100vh] bg-white rounded-[10px]  px-[20px] py-[30px] ml-[20px] mt-[20px] shadow-lg; */
 
@@ -56,15 +56,15 @@
 }
 
 .send-message, .receive-message {
-    @apply px-[10px] py-[5px] rounded-[10px] mt-[5px] text-[14px] w-fit
+    @apply px-[10px] py-[20px] rounded-[10px] mt-[5px] text-[14px] w-fit
 }
 
 .send-message {
-    @apply bg-red-600 text-white rounded-tr-[0px] ml-[10px]
+    @apply bg-red-600 text-white rounded-tr-[0px] ml-[100px]
 }
 
 .receive-message {
-    @apply bg-[#ddd] text-[#28282B] rounded-bl-[0px] mr-[10px]
+    @apply bg-[#ddd] text-[#28282B] rounded-bl-[0px] mr-[100px]
 }
 
 .message-time {

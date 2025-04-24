@@ -23,7 +23,7 @@ let userSchema=new mongoose.Schema({
         // select:false, // is res do not send password
         // minlength:8
     },
-    proflePic:{
+    profilePic:{
         type:String,
         required:false
     }

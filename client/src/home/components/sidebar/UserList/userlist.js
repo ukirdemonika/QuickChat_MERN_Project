@@ -8,6 +8,7 @@ import moment from "moment";
 
 function UserList({ searchKey }) {
     //create alise for user as a currentUser
+    // console.log('searchKey:', searchKey);
     const { allUsers, allChats, user: currentUser, selectedChat } = useSelector(state => state.userReducer);
     // console.log(allUsers)
     const dispatch = useDispatch();
@@ -62,47 +63,59 @@ function UserList({ searchKey }) {
             return selectedChat.members.map(m => m._id).includes(user._id); //check if user id is present in the selected chat members array.
         }
         return false;
-        
+
     }
 
-    const getlastMessages=(userId)=>{
-        
-        const chat=allChats.find(chat=>chat.members.map(m=>m._id).includes(userId));//find the chat which contain current user id and search user id.
-        if(!chat || !chat.lastMessage){
+    const getlastMessages = (userId) => {
+
+        const chat = allChats.find(chat => chat.members.map(m => m._id).includes(userId));//find the chat which contain current user id and search user id.
+        if (!chat || !chat.lastMessage) {
             return ''
-        }else{
+        } else {
             //if chat is found then check if the last message is sent by current user or not.
-           //if last message is sent by current user then return 'You' else return the last message.
-            const msgPrefix=chat?.lastMessage?.sender === currentUser._id ? 'You: ':'';
-            return msgPrefix+chat?.lastMessage?.text?.substring(0,25);
+            //if last message is sent by current user then return 'You' else return the last message.
+            const msgPrefix = chat?.lastMessage?.sender === currentUser._id ? 'You: ' : '';
+            return msgPrefix + chat?.lastMessage?.text?.substring(0, 25);
         }
     }
-    const getMessageTimeStamp=(userId)=>{
-        const chat=allChats.find(chat=>chat.members.map(m=>m._id).includes(userId));//find the chat which contain current user id and search user id.
-        if(!chat || !chat.lastMessage){
+    const getMessageTimeStamp = (userId) => {
+        const chat = allChats.find(chat => chat.members.map(m => m._id).includes(userId));//find the chat which contain current user id and search user id.
+        if (!chat || !chat.lastMessage) {
             return ''
-        }else{
-           return moment(chat?.lastMessage?.createdAt).format('hh:mm A');//if chat is found then return the last message timestamp.
+        } else {
+            return moment(chat?.lastMessage?.createdAt).format('hh:mm A');//if chat is found then return the last message timestamp.
         }
     }
+
+    function getData(){
+        if(searchKey === ""){
+            console.log('allchats',allChats)
+            return allChats;
+        }else{
+            return allUsers.filter(user => {
+                return user.firstName.toLowerCase().includes(searchKey.toLowerCase()) ||
+                    user.lastName.toLowerCase().includes(searchKey.toLowerCase());
+            });
+        }
+    }
+    
     return (
-
-        allUsers.filter(user =>
-
-            //filter thoose user which contain first or last name
-            (
-                (user.firstName.toLowerCase().includes(searchKey.toLowerCase()) ||
-                    user.lastName.toLowerCase().includes(searchKey.toLowerCase())) && searchKey
-            ) ||
-            //display existing chat with current user doing with other users, some is method which iterated every item from array.
-            (allChats.some(chat => chat.members.map(m => m._id).includes(user._id)))
-        ).map(user => {
+        getData()
+        .map(obj => {
+            let user = obj;
+            // console.log("User:", user);
+            if (obj.members) {
+                //this is selected chat, so we need to find the user from members array.
+                //find the user from members array which is not current user id.
+                user = obj.members.find(mem => mem._id !== currentUser._id); //if user is found then return the user object.
+               
+            }
             return <div className="user-search-filter" onClick={() => openSelectedChat(user._id)} key={user._id}>
 
-              <div className={IsUserSelectedChat(user) ? 'selected-user' : 'filtered-user'} >
+                <div className={IsUserSelectedChat(user) ? 'selected-user' : 'filtered-user'} >
                     <div className="filter-user-display">
-                        {user.profilePic && <img src={user.profilePic} alt="Profile pic" className="user-profile-image" />}
-                        {!user.profilePic && <div className={IsUserSelectedChat(user)?'user-selected-profile-pic':"user-default-profile-pic"}>
+                        {user?.profilePic && <img src={user.profilePic} alt="Profile pic" className="user-profile-image" />}
+                        {!user?.profilePic && <div className={IsUserSelectedChat(user) ? 'user-selected-profile-pic' : "user-default-profile-pic"}>
                             {
                                 user.firstName.charAt(0).toUpperCase() +
                                 user.lastName.charAt(0).toUpperCase()
@@ -115,9 +128,12 @@ function UserList({ searchKey }) {
                                 }
                             </div>
                             <div className="user-display-email">{getlastMessages(user._id) || user.email}</div>
-                           
+
                         </div>
-                        <div className="message-timestamp">{getMessageTimeStamp(user._id)}</div>
+                        <div className="message-timestamp">
+                            {getMessageTimeStamp(user._id)}
+
+                        </div>
                         {!allChats.find(chat => chat.members.map(m => m._id).includes(user._id)) &&
                             <div className="user-start-chat">
                                 <button className="user-start-chart-btn"
@@ -129,6 +145,7 @@ function UserList({ searchKey }) {
                 </div>
             </div>
         })
+
 
     )
 }
