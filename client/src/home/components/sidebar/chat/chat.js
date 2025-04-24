@@ -90,7 +90,7 @@ function ChatArea() {
     useEffect(() => {
         getAllMessagesFromDB(); 
         
-        if(selectedChat?.lastMessage?.sender != currentUser._id){ 
+        if(selectedChat?.lastMessage?.sender !== currentUser._id){ 
             clearUnReadMessage();//clear the unread message count when user open the chat.
         }
        
