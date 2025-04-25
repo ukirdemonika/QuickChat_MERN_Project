@@ -25,8 +25,11 @@ app.use('/api/chat',chatRouter);
 app.use('/api/message',messageRouter);
 
  //this is the socket io instance which is used to create socket connection between client and server.
- io.on('connection',(socket)=>{
-    console.log('socket connected with id:',socket.id); // this is the socket id of the user who is connected to the server.
+ io.on('connection',socket=>{
+        socket.on('send-message-all-client',data=>{
+            // console.log('message from client:',data); // this is the message which we are going to send from client to server.
+            socket.emit('send-message-from-server',data);
+        })
 })
 module.exports=server;   //export app object
 
