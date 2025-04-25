@@ -26,9 +26,12 @@ app.use('/api/message',messageRouter);
 
  //this is the socket io instance which is used to create socket connection between client and server.
  io.on('connection',socket=>{
-        socket.on('send-message-all-client',data=>{
-            // console.log('message from client:',data); // this is the message which we are going to send from client to server.
-            socket.emit('send-message-from-server',data);
+        socket.on('join-room',userId=>{ // this is the event which is emitted from client side when user join the room.
+            socket.join(userId)// this is the method which is used to join the room.
+            console.log('user joined room:',userId)
+        })
+        socket.on('send-message',data=>{
+            socket.to(data.recepient).emit('receive-message',data.text) // this is the method which is used to send message to the specific user.
         })
 })
 module.exports=server;   //export app object
