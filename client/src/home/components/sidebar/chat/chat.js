@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import moment from 'moment';
 import { clearUnreadMessageCount } from '../../../../apicalls/chat';
 import { setSelectedChat } from '../../../../redux/userSlice';
+import store from '../../../../redux/store';
 function ChatArea({socket}) {
     const { selectedChat, user: currentUser, allChats } = useSelector(state => state.userReducer);
     //chat is selected chat, and user is current user.
@@ -100,22 +101,31 @@ function ChatArea({socket}) {
         if(selectedChat?.lastMessage?.sender !== currentUser._id){ 
             clearUnReadMessage();//clear the unread message count when user open the chat.
         }
-
-        socket.off('hi').on('hi', (message) => {
-            console.log('Received message:', message); // Log the received message for debugging
-            
+        
+        socket.off('receive-message').on('receive-message', (message) => {
+            let selectedChat = store.getState().userReducer.selectedChat; //get the selected chat from store.
+            if (selectedChat._id === message.chatId) {
             setAllMessages(prevmsg => [...prevmsg, message]); // Update the state with the new message
+            }
+            console.log('Received message:', message); // Log the received message for debugging
         });
        
     }, [selectedChat]); //when selected chat is changed, then get all messages from db.
 
+
+    //auto scroll down when new messahe arrived
+    useEffect(() => {
+        let msgContainer=document.getElementById('chat-area');
+        msgContainer.scrollTop = msgContainer.scrollHeight; // This means the scroll position of the chat area is set to its maximum height, effectively scrolling to the bottom.
+        //scroll to the bottom of the chat area when new message is received.
+    },[allMessages])
     return (
         <>
             {selectedChat && <div className='chat-container'>
                 <div className='chat-header'>
                     {selectedUserChat.firstName} {selectedUserChat.lastName}
                 </div>
-                <div className='chat-area'>
+                <div className='chat-area' id='chat-area'>
                     {allMessages.map(msg => {
 
                         let isCurrentUserSender = msg.sender === currentUser._id; //check if the current user is sender of the message.

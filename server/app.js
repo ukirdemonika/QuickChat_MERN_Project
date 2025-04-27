@@ -35,7 +35,7 @@ app.use('/api/message',messageRouter);
             io
             .to(message.members[0])
             .to(message.members[1])
-            .emit('hi',message) // this is the method which is used to emit the message to the room.
+            .emit('receive-message',message) // this is the method which is used to emit the message to the room.
         })
 })
 module.exports=server;   //export app object
