@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 import moment from 'moment';
 import { clearUnreadMessageCount } from '../../../../apicalls/chat';
 import { setSelectedChat } from '../../../../redux/userSlice';
-function ChatArea() {
+function ChatArea({socket}) {
     const { selectedChat, user: currentUser, allChats } = useSelector(state => state.userReducer);
     //chat is selected chat, and user is current user.
     //selectedUserChat is the chat which is selected by the user, and it is the member of the selected chat.
@@ -17,7 +17,7 @@ function ChatArea() {
     const dispatch = useDispatch()
 
     async function sendMessageFromApi() {
-        let response = null;
+        
         try {
 
             let newMessage = {
@@ -25,15 +25,22 @@ function ChatArea() {
                 sender: currentUser._id,
                 text: message
             }
-            dispatch(showLoader());
-            response = await createNewMessage(newMessage);
-            dispatch(hideLoader());
+            //send message to socket server with the new message object and members array.
+           socket.emit('send-message', {
+            ...newMessage,
+            members: selectedChat.members.map(m => m._id), // Spread the newMessage object and add members array with member IDs.
+            read: false, // Indicate that the message is unread initially.
+            createdAt: moment().format('YYYY-MM-DD HH:mm:ss') // Add a timestamp for when the message was created.
+           });
+
+           const  response = await createNewMessage(newMessage);
+            
             if (response.success) {
                 setMessage('');
             }
         } catch (error) {
-            dispatch(hideLoader());
-            toast.error(response.message);
+            
+            toast.error(error.message);
         }
     }
 
@@ -93,6 +100,12 @@ function ChatArea() {
         if(selectedChat?.lastMessage?.sender !== currentUser._id){ 
             clearUnReadMessage();//clear the unread message count when user open the chat.
         }
+
+        socket.off('hi').on('hi', (message) => {
+            console.log('Received message:', message); // Log the received message for debugging
+            
+            setAllMessages(prevmsg => [...prevmsg, message]); // Update the state with the new message
+        });
        
     }, [selectedChat]); //when selected chat is changed, then get all messages from db.
 

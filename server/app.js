@@ -30,8 +30,12 @@ app.use('/api/message',messageRouter);
             socket.join(userId)// this is the method which is used to join the room.
             console.log('user joined room:',userId)
         })
-        socket.on('send-message',data=>{
-            socket.to(data.recepient).emit('receive-message',data.text) // this is the method which is used to send message to the specific user.
+        socket.on('send-message',(message)=>{
+            // console.log(message);
+            io
+            .to(message.members[0])
+            .to(message.members[1])
+            .emit('hi',message) // this is the method which is used to emit the message to the room.
         })
 })
 module.exports=server;   //export app object
