@@ -6,6 +6,8 @@ import { hideLoader, showLoader } from "../redux/loaderSlice";
 import { setUser ,setAllUsers,setAllChats} from "../redux/userSlice";
 import toast from "react-hot-toast";
 import { getAllChats } from "../apicalls/chat";
+import SocketContext from "../context/socketContext";
+import io from "socket.io-client";
 
 function ProtectedRoute({children}){
     // console.log("Children:", children);
@@ -13,6 +15,7 @@ function ProtectedRoute({children}){
     // let[user,setUsers]=useState(null);
     
     // const { user } = useSelector(state => state.userReducer);
+    const socket = io("http://localhost:5000"); // Replace with your server URL
     const dispatch=useDispatch();
 
     const navigate=useNavigate();
@@ -82,9 +85,9 @@ function ProtectedRoute({children}){
         }
     },[])
     return(
-        <div>
+        <SocketContext.Provider value={socket}>
             {children}
-        </div>
+        </SocketContext.Provider>
     )
 }
 export default ProtectedRoute;

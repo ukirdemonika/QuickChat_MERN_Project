@@ -2,7 +2,11 @@ import Search from "./search/search";
 import './sidebar.css'
 import { useState } from "react";
 import UserList from "./UserList/userlist";
-function Sidebar({socket}) {
+import { useContext } from "react";
+import SocketContext from "../../../context/socketContext";
+
+function Sidebar() {
+    let socket=useContext(SocketContext);
     const [searchKey, setSearchKey] = useState('');
     return (
         <div className="sidebar-container">

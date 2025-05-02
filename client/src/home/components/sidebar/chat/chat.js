@@ -8,7 +8,11 @@ import moment from 'moment';
 import { clearUnreadMessageCount } from '../../../../apicalls/chat';
 import { setSelectedChat } from '../../../../redux/userSlice';
 import store from '../../../../redux/store';
-function ChatArea({socket}) {
+import { useContext } from 'react';
+import SocketContext from '../../../../context/socketContext';
+
+function ChatArea() {
+    let socket=useContext(SocketContext);
     const { selectedChat, user: currentUser, allChats } = useSelector(state => state.userReducer);
     //chat is selected chat, and user is current user.
     //selectedUserChat is the chat which is selected by the user, and it is the member of the selected chat.
