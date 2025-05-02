@@ -5,8 +5,10 @@ import { hideLoader, showLoader } from "../../../../redux/loaderSlice";
 import { createNewChat } from "../../../../apicalls/chat";
 import { setAllChats, setSelectedChat } from "../../../../redux/userSlice";
 import moment from "moment";
+import {  useEffect } from "react";
+import store from "../../../../redux/store";
 
-function UserList({ searchKey }) {
+function UserList({ searchKey,socket }) {
     //create alise for user as a currentUser
     // console.log('searchKey:', searchKey);
     const { allUsers, allChats, user: currentUser, selectedChat } = useSelector(state => state.userReducer);
@@ -89,7 +91,7 @@ function UserList({ searchKey }) {
 
     function getData(){
         if(searchKey === ""){
-            console.log('allchats',allChats)
+            // console.log('allchats',allChats)
             return allChats;
         }else{
             return allUsers.filter(user => {
@@ -98,6 +100,38 @@ function UserList({ searchKey }) {
             });
         }
     }
+
+    function getUnreadMessageCount(userId){
+        // console.log('userId:',userId)
+        const chat=allChats.find(chat=>
+                chat.members.map(m=>m._id).includes(userId)); //find the chat which contain current user id and search user id.
+            if(chat && chat.unReadMessageCount && chat.lastMessage?.sender !==currentUser._id){
+                return <div className="unread-message-counter">{chat.unReadMessageCount}</div>
+            }else{
+                return "";
+            }
+        
+    }
+
+    useEffect(()=>{
+        socket.on('received-message',(message)=>{
+            const selectedChat=store.getState().userReducer.selectedChat;
+            const allChats=store.getState().userReducer.allChats;
+            if(selectedChat._id !== message.chatId){////if selected chat id is not equal to message chat id then update the unread message count.
+                const updateChats=allChats.map((chat)=>{ //map through all the chats and find the chat which is not current user id.
+                    if(chat._id !== message.chatId){
+                        return {
+                            ...chat, //get all the properties of chat object.
+                            unreadMessageCount:(chat?.unreadMessageCount || 0) + 1 ,//increment the unread message count by 1.
+                            lastMessage:message //update the last message with new message.
+                        }
+                    }
+                    return chat;
+                })
+                dispatch(setAllChats(updateChats)); //update the all chats with new data.
+            }
+        })
+    },[])
     
     return (
         getData()
@@ -130,10 +164,14 @@ function UserList({ searchKey }) {
                             <div className="user-display-email">{getlastMessages(user._id) || user.email}</div>
 
                         </div>
-                        <div className="message-timestamp">
+                        <div>
+                            {getUnreadMessageCount(user._id)}
+                            <div className="message-timestamp">
                             {getMessageTimeStamp(user._id)}
 
+                        </div>   
                         </div>
+                        
                         {!allChats.find(chat => chat.members.map(m => m._id).includes(user._id)) &&
                             <div className="user-start-chat">
                                 <button className="user-start-chart-btn"
