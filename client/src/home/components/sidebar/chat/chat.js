@@ -6,13 +6,13 @@ import { showLoader, hideLoader } from "../../../../redux/loaderSlice";
 import toast from 'react-hot-toast';
 import moment from 'moment';
 import { clearUnreadMessageCount } from '../../../../apicalls/chat';
-import { setSelectedChat } from '../../../../redux/userSlice';
+import { setAllChats, setSelectedChat } from '../../../../redux/userSlice';
 import store from '../../../../redux/store';
 import { useContext } from 'react';
 import SocketContext from '../../../../context/socketContext';
 
 function ChatArea() {
-    let socket=useContext(SocketContext);
+    let socket = useContext(SocketContext);
     const { selectedChat, user: currentUser, allChats } = useSelector(state => state.userReducer);
     //chat is selected chat, and user is current user.
     //selectedUserChat is the chat which is selected by the user, and it is the member of the selected chat.
@@ -22,7 +22,7 @@ function ChatArea() {
     const dispatch = useDispatch()
 
     async function sendMessageFromApi() {
-        
+
         try {
 
             let newMessage = {
@@ -31,20 +31,20 @@ function ChatArea() {
                 text: message
             }
             //send message to socket server with the new message object and members array.
-           socket.emit('send-message', {
-            ...newMessage,
-            members: selectedChat.members.map(m => m._id), // Spread the newMessage object and add members array with member IDs.
-            read: false, // Indicate that the message is unread initially.
-            createdAt: moment().format('YYYY-MM-DD HH:mm:ss') // Add a timestamp for when the message was created.
-           });
+            socket.emit('send-message', {
+                ...newMessage,
+                members: selectedChat.members.map(m => m._id), // Spread the newMessage object and add members array with member IDs.
+                read: false, // Indicate that the message is unread initially.
+                createdAt: moment().format('YYYY-MM-DD HH:mm:ss') // Add a timestamp for when the message was created.
+            });
 
-           const  response = await createNewMessage(newMessage);
-            
+            const response = await createNewMessage(newMessage);
+
             if (response.success) {
                 setMessage('');
             }
         } catch (error) {
-            
+
             toast.error(error.message);
         }
     }
@@ -81,9 +81,13 @@ function ChatArea() {
     async function clearUnReadMessage() {
         let response = null;
         try {
-            dispatch(showLoader());
+            //
+            socket.emit('clear-unread-message', {
+                chatId: selectedChat._id,
+                members: selectedChat.members.map(m => m._id), // Spread the newMessage object and add members array with member IDs.
+            })
             response = await clearUnreadMessageCount(selectedChat._id);
-            dispatch(hideLoader());
+
             if (response.success) {
                 allChats.map(chat => {
                     if (chat._id === selectedChat._id) { //check if chat id is same as selected chat id.
@@ -93,36 +97,67 @@ function ChatArea() {
                 })
             }
         } catch (error) {
-            dispatch(hideLoader());
+
             toast.error(response.message);
         }
     }
     //get all messages from db when selected chat is changed & initially when page load.
     //selected chat is the chat which is selected by the user.
     useEffect(() => {
-        getAllMessagesFromDB(); 
-        
-        if(selectedChat?.lastMessage?.sender !== currentUser._id){ 
+        getAllMessagesFromDB();
+
+        if (selectedChat?.lastMessage?.sender !== currentUser._id) {
             clearUnReadMessage();//clear the unread message count when user open the chat.
         }
-        
+
         socket.off('receive-message').on('receive-message', (message) => {
             let selectedChat = store.getState().userReducer.selectedChat; //get the selected chat from store.
             if (selectedChat._id === message.chatId) {
-            setAllMessages(prevmsg => [...prevmsg, message]); // Update the state with the new message
+                setAllMessages(prevmsg => [...prevmsg, message]); // Update the state with the new message
             }
-            console.log('Received message:', message); // Log the received message for debugging
+            //
+            if (selectedChat._id === message.chatId && message.sender !== currentUser._id) {
+                clearUnReadMessage();//clear the unread message count when user open the chat.
+
+            }
         });
-       
+
+        socket.on('clear-unread-message-count', data => {
+            let selectedChat = store.getState().userReducer.selectedChat;
+            let allChats = store.getState().userReducer.allChats; //get all chats from store.
+
+
+            if (selectedChat._id === data.chatId) {
+                //set unread message count to 0 when user open the chat.
+                let updatedChats = allChats.map(chat => {
+                    if (chat._id === data.chatId) {
+                        return { ...chat, unReadMessageCount: 0 } //update the unread message count to 0.
+                    }
+                    return chat; //return chat object.
+                })
+                dispatch(setAllChats(updatedChats)); //update the all chats with new data.
+
+                //UPDATING READ PROPRTY IN MESSAGE OBJECT
+                setAllMessages(prevMsg => {
+                    return prevMsg.map(msg => {
+                        return { ...msg, read: true }
+                    })
+                })
+            }
+
+
+
+        })
+
     }, [selectedChat]); //when selected chat is changed, then get all messages from db.
 
 
     //auto scroll down when new messahe arrived
     useEffect(() => {
-        let msgContainer=document.getElementById('chat-area');
+        let msgContainer = document.getElementById('chat-area');
         msgContainer.scrollTop = msgContainer.scrollHeight; // This means the scroll position of the chat area is set to its maximum height, effectively scrolling to the bottom.
         //scroll to the bottom of the chat area when new message is received.
-    },[allMessages])
+    }, [allMessages])
     return (
         <>
             {selectedChat && <div className='chat-container'>
@@ -140,11 +175,11 @@ function ChatArea() {
                                 </div>
                                 <div style={isCurrentUserSender ? { float: 'right' } : { float: 'left' }} className='message-time'>
                                     {formatTime(msg.createdAt)}
-                                    
+
                                     {isCurrentUserSender && (
                                         msg.read &&
-                                            
-                                            <i className='fa fa-check-circle' aria-hidden="true" style={{color:"#e74c3c"}}></i>
+
+                                        <i className='fa fa-check-circle' aria-hidden="true" style={{ color: "#e74c3c" }}></i>
                                     )}
                                 </div>
                             </div>

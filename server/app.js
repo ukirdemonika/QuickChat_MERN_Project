@@ -37,6 +37,11 @@ app.use('/api/message',messageRouter);
             .to(message.members[1])
             .emit('receive-message',message) // this is the method which is used to emit the message to the room.
         })
+        socket.on('clear-unread-message',data=>{
+            io.to(data.members[0])
+            .to(data.members[1])
+            .emit('clear-unread-message-count',data) // this is the method which is used to emit the message to the room.
+        })
 })
 module.exports=server;   //export app object
 
