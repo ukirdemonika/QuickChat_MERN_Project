@@ -85,9 +85,11 @@ function ProtectedRoute({children}){
         }
     },[])
     return(
-        <SocketContext.Provider value={socket}>
-            {children}
-        </SocketContext.Provider>
+        // <SocketContext.Provider value={socket}>
+        <>
+        {children}</>
+            
+        // </SocketContext.Provider>
     )
 }
 export default ProtectedRoute;

@@ -32,10 +32,15 @@ app.use('/api/message',messageRouter);
         })
         socket.on('send-message',(message)=>{
             // console.log(message);
+             io
+            .to(message.members[0])
+            .to(message.members[1])
+            .emit('receive-message',message)
+            
             io
             .to(message.members[0])
             .to(message.members[1])
-            .emit('receive-message',message) // this is the method which is used to emit the message to the room.
+            .emit('set-message-count',message) // this is the method which is used to emit the message to the room.
         })
         socket.on('clear-unread-message',data=>{
             io.to(data.members[0])

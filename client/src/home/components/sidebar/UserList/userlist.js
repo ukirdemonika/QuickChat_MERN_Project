@@ -5,15 +5,15 @@ import { hideLoader, showLoader } from "../../../../redux/loaderSlice";
 import { createNewChat } from "../../../../apicalls/chat";
 import { setAllChats, setSelectedChat } from "../../../../redux/userSlice";
 import moment from "moment";
-import {  useEffect } from "react";
+import { useEffect } from "react";
 import store from "../../../../redux/store";
 import { useContext } from "react";
 import SocketContext from "../../../../context/socketContext";
 
-function UserList({ searchKey}) {
+function UserList({ searchKey ,socket}) {
     //create alise for user as a currentUser
     // console.log('searchKey:', searchKey);
-    let socket=useContext(SocketContext);
+    // const socket = useContext(SocketContext);
     const { allUsers, allChats, user: currentUser, selectedChat } = useSelector(state => state.userReducer);
     // console.log(allUsers)
     const dispatch = useDispatch();
@@ -92,11 +92,11 @@ function UserList({ searchKey}) {
         }
     }
 
-    function getData(){
-        if(searchKey === ""){
+    function getData() {
+        if (searchKey === "") {
             // console.log('allchats',allChats)
             return allChats;
-        }else{
+        } else {
             return allUsers.filter(user => {
                 return user.firstName.toLowerCase().includes(searchKey.toLowerCase()) ||
                     user.lastName.toLowerCase().includes(searchKey.toLowerCase());
@@ -104,88 +104,99 @@ function UserList({ searchKey}) {
         }
     }
 
-    function getUnreadMessageCount(userId){
+    function getUnreadMessageCount(userId) {
         // console.log('userId:',userId)
-        const chat=allChats.find(chat=>
-                chat.members.map(m=>m._id).includes(userId)); //find the chat which contain current user id and search user id.
-            if(chat && chat.unReadMessageCount && chat.lastMessage?.sender !==currentUser._id){
-                return <div className="unread-message-counter">{chat.unReadMessageCount}</div>
-            }else{
-                return "";
-            }
-        
+        const chat = allChats.find(chat =>
+            chat.members.map(m => m._id).includes(userId)); //find the chat which contain current user id and search user id.
+        if (chat && chat.unReadMessageCount && chat.lastMessage?.sender !== currentUser._id) {
+            return <div className="unread-message-counter">{chat.unReadMessageCount}</div>
+        } else {
+            return "";
+        }
+
     }
 
-    useEffect(()=>{
-        socket.on('received-message',(message)=>{
-            const selectedChat=store.getState().userReducer.selectedChat;
-            const allChats=store.getState().userReducer.allChats;
-            if(selectedChat._id !== message.chatId){////if selected chat id is not equal to message chat id then update the unread message count.
-                const updateChats=allChats.map((chat)=>{ //map through all the chats and find the chat which is not current user id.
-                    if(chat._id !== message.chatId){
+    useEffect(() => {
+        console.log('useEffect',socket)
+        socket.on('set-message-count', (message) => {
+            console.log('inside event userlist')
+            const selectedChat = store.getState().userReducer.selectedChat;
+            let allChats = store.getState().userReducer.allChats;
+            if (selectedChat._id !== message.chatId) {////if selected chat id is not equal to message chat id then update the unread message count.
+                const updateChats = allChats.map((chat) => { //map through all the chats and find the chat which is not current user id.
+                    if (chat._id !== message.chatId) {
                         return {
                             ...chat, //get all the properties of chat object.
-                            unreadMessageCount:(chat?.unreadMessageCount || 0) + 1 ,//increment the unread message count by 1.
-                            lastMessage:message //update the last message with new message.
+                            unreadMessageCount: (chat?.unreadMessageCount || 0) + 1,//increment the unread message count by 1.
+                            lastMessage: message //update the last message with new message.
                         }
                     }
                     return chat;
                 })
-                dispatch(setAllChats(updateChats)); //update the all chats with new data.
+                allChats = updateChats;
             }
+            //sorting chats based on last send and received message.
+            //1. find the latest chat
+            const latestChat = allChats.find(chat => chat._id === message.chatId);
+            //2. Get all other chats
+            const otherChats = allChats.filter(chat => chat._id !== message.chatId);
+            //3. crearte a new array with latest chat and all other chats.
+
+            allChats = [latestChat, ...otherChats];
+            dispatch(setAllChats(allChats)); //update the all chats with new data.
         })
-    },[])
-    
+    }, [])
+
     return (
         getData()
-        .map(obj => {
-            let user = obj;
-            // console.log("User:", user);
-            if (obj.members) {
-                //this is selected chat, so we need to find the user from members array.
-                //find the user from members array which is not current user id.
-                user = obj.members.find(mem => mem._id !== currentUser._id); //if user is found then return the user object.
-               
-            }
-            return <div className="user-search-filter" onClick={() => openSelectedChat(user._id)} key={user._id}>
+            .map(obj => {
+                let user = obj;
+                // console.log("User:", user);
+                if (obj.members) {
+                    //this is selected chat, so we need to find the user from members array.
+                    //find the user from members array which is not current user id.
+                    user = obj.members.find(mem => mem._id !== currentUser._id); //if user is found then return the user object.
 
-                <div className={IsUserSelectedChat(user) ? 'selected-user' : 'filtered-user'} >
-                    <div className="filter-user-display">
-                        {user?.profilePic && <img src={user.profilePic} alt="Profile pic" className="user-profile-image" />}
-                        {!user?.profilePic && <div className={IsUserSelectedChat(user) ? 'user-selected-profile-pic' : "user-default-profile-pic"}>
-                            {
-                                user.firstName.charAt(0).toUpperCase() +
-                                user.lastName.charAt(0).toUpperCase()
-                            }
-                        </div>}
-                        <div className="filter-user-details">
-                            <div className="user-display-name">
+                }
+                return <div className="user-search-filter" onClick={() => openSelectedChat(user._id)} key={user._id}>
+
+                    <div className={IsUserSelectedChat(user) ? 'selected-user' : 'filtered-user'} >
+                        <div className="filter-user-display">
+                            {user?.profilePic && <img src={user.profilePic} alt="Profile pic" className="user-profile-image" />}
+                            {!user?.profilePic && <div className={IsUserSelectedChat(user) ? 'user-selected-profile-pic' : "user-default-profile-pic"}>
                                 {
-                                    formatName(user)
+                                    user.firstName.charAt(0).toUpperCase() +
+                                    user.lastName.charAt(0).toUpperCase()
                                 }
-                            </div>
-                            <div className="user-display-email">{getlastMessages(user._id) || user.email}</div>
+                            </div>}
+                            <div className="filter-user-details">
+                                <div className="user-display-name">
+                                    {
+                                        formatName(user)
+                                    }
+                                </div>
+                                <div className="user-display-email">{getlastMessages(user._id) || user.email}</div>
 
-                        </div>
-                        <div>
-                            {getUnreadMessageCount(user._id)}
-                            <div className="message-timestamp">
-                            {getMessageTimeStamp(user._id)}
-
-                        </div>   
-                        </div>
-                        
-                        {!allChats.find(chat => chat.members.map(m => m._id).includes(user._id)) &&
-                            <div className="user-start-chat">
-                                <button className="user-start-chart-btn"
-                                    // pass search user as a param, allUser contain logic of searchuser
-                                    onClick={() => startNewChat(user._id)}>Start chat</button>
                             </div>
-                        }
+                            <div>
+                                {getUnreadMessageCount(user._id)}
+                                <div className="message-timestamp">
+                                    {getMessageTimeStamp(user._id)}
+
+                                </div>
+                            </div>
+
+                            {!allChats.find(chat => chat.members.map(m => m._id).includes(user._id)) &&
+                                <div className="user-start-chat">
+                                    <button className="user-start-chart-btn"
+                                        // pass search user as a param, allUser contain logic of searchuser
+                                        onClick={() => startNewChat(user._id)}>Start chat</button>
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
-        })
+            })
 
 
     )

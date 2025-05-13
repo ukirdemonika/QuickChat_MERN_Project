@@ -5,8 +5,8 @@ import UserList from "./UserList/userlist";
 import { useContext } from "react";
 import SocketContext from "../../../context/socketContext";
 
-function Sidebar() {
-    let socket=useContext(SocketContext);
+function Sidebar({socket}) {
+    // let socket=useContext(SocketContext);
     const [searchKey, setSearchKey] = useState('');
     return (
         <div className="sidebar-container">

@@ -11,8 +11,8 @@ import store from '../../../../redux/store';
 import { useContext } from 'react';
 import SocketContext from '../../../../context/socketContext';
 
-function ChatArea() {
-    let socket = useContext(SocketContext);
+function ChatArea({socket}) {
+    // let socket = useContext(SocketContext);
     const { selectedChat, user: currentUser, allChats } = useSelector(state => state.userReducer);
     //chat is selected chat, and user is current user.
     //selectedUserChat is the chat which is selected by the user, and it is the member of the selected chat.
