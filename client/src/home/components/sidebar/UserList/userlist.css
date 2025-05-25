@@ -42,6 +42,13 @@
 .unread-message-counter{
     @apply bg-red-600 text-white rounded-full w-[25px] h-[25px] text-center float-right font-bold text-[13px] pt-1 max-[1000px]:hidden;
 }
+.online-user-indicator{
+    @apply bg-green-500 rounded-full w-[10px] h-[10px] animate-blink;
+
+}
+.offline-user-indicator{
+    @apply  w-[10px] h-[10px];
+}
 
 
 

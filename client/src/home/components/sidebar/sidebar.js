@@ -5,7 +5,7 @@ import UserList from "./UserList/userlist";
 import { useContext } from "react";
 import SocketContext from "../../../context/socketContext";
 
-function Sidebar({socket}) {
+function Sidebar({socket, userList}) {
     // let socket=useContext(SocketContext);
     const [searchKey, setSearchKey] = useState('');
     return (
@@ -15,7 +15,7 @@ function Sidebar({socket}) {
                 setSearchKey={setSearchKey}>
             </Search>
             {/* //search user and get user list */}
-            <UserList searchKey={searchKey} socket={socket}></UserList>
+            <UserList searchKey={searchKey} socket={socket} userList={userList}></UserList>
         </div>
     )
 }

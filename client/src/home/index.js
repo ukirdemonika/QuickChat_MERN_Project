@@ -6,16 +6,22 @@ import './index.css';
 import io from  "socket.io-client";
 import { useContext, useEffect } from "react";
 import SocketContext from "../context/socketContext";
+import { useState } from "react";
 
 const socket = io('http://localhost:5000');//connect to socket server
+
 
 function Home(){
     const{selectedChat,user}=useSelector(state=>state.userReducer);
     // let socket=useContext(SocketContext);
+    const [userList, setUserList] = useState([]);
     useEffect(()=>{
         if(user){
             socket.emit('join-room',user._id) //join the room with current logged in user id
-            
+            socket.emit('user-login',user._id) //emit user login event with user id
+            socket.on('online-users',(onlineUsers)=>{
+                setUserList(onlineUsers);
+            })
         }
         
     },[user])
@@ -23,7 +29,7 @@ function Home(){
         <div className="home-page">
             <Header></Header>
             <div className="main-content">
-                <Sidebar socket={socket}></Sidebar>
+                <Sidebar socket={socket} userList={userList}></Sidebar>
                 {selectedChat && <ChatArea socket={socket}></ChatArea>}
             </div>
         </div>

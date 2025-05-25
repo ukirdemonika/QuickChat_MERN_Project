@@ -10,7 +10,7 @@ import store from "../../../../redux/store";
 import { useContext } from "react";
 import SocketContext from "../../../../context/socketContext";
 
-function UserList({ searchKey ,socket}) {
+function UserList({ searchKey ,socket,userList}) {
     //create alise for user as a currentUser
     // console.log('searchKey:', searchKey);
     // const socket = useContext(SocketContext);
@@ -168,6 +168,7 @@ function UserList({ searchKey ,socket}) {
 
                     <div className={IsUserSelectedChat(user) ? 'selected-user' : 'filtered-user'} >
                         <div className="filter-user-display">
+                            <div className={userList.includes(user._id) ? 'online-user-indicator' : 'offline-user-indicator'}></div>
                             {user?.profilePic && <img src={user.profilePic} alt="Profile pic" className="user-profile-image" />}
                             {!user?.profilePic && <div className={IsUserSelectedChat(user) ? 'user-selected-profile-pic' : "user-default-profile-pic"}>
                                 {
