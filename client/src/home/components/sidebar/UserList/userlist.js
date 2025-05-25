@@ -52,7 +52,8 @@ function UserList({ searchKey ,socket}) {
         console.log(selectedUser_Id);
         //find the chat which contain current user id and search user id, if chat is found then open the chat.
         //allChats contain all the members who are doing chat, and selectedUser_Id is the id of search user.
-        const chat = allChats.find(chat => chat.members.map(m => m._id).includes(selectedUser_Id) &&
+        const chat = allChats.find(chat => 
+            chat.members.map(m => m._id).includes(selectedUser_Id) &&
             chat.members.map(m => m._id).includes(currentUser._id));
         if (chat) {
             //if chat is found then open the chat.
@@ -75,7 +76,7 @@ function UserList({ searchKey ,socket}) {
 
         const chat = allChats.find(chat => chat.members.map(m => m._id).includes(userId));//find the chat which contain current user id and search user id.
         if (!chat || !chat.lastMessage) {
-            return ''
+            return "";
         } else {
             //if chat is found then check if the last message is sent by current user or not.
             //if last message is sent by current user then return 'You' else return the last message.
@@ -83,6 +84,9 @@ function UserList({ searchKey ,socket}) {
             return msgPrefix + chat?.lastMessage?.text?.substring(0, 25);
         }
     }
+
+
+
     const getMessageTimeStamp = (userId) => {
         const chat = allChats.find(chat => chat.members.map(m => m._id).includes(userId));//find the chat which contain current user id and search user id.
         if (!chat || !chat.lastMessage) {
@@ -118,22 +122,23 @@ function UserList({ searchKey ,socket}) {
 
     useEffect(() => {
         console.log('useEffect',socket)
-        socket.on('set-message-count', (message) => {
-            console.log('inside event userlist')
+        socket.off('set-message-count').on('set-message-count', (message) => {
+            // console.log('inside event userlist',message)
             const selectedChat = store.getState().userReducer.selectedChat;
             let allChats = store.getState().userReducer.allChats;
-            if (selectedChat._id !== message.chatId) {////if selected chat id is not equal to message chat id then update the unread message count.
+            if (selectedChat?._id !== message.chatId) {////if selected chat id is not equal to message chat id then update the unread message count.
                 const updateChats = allChats.map((chat) => { //map through all the chats and find the chat which is not current user id.
-                    if (chat._id !== message.chatId) {
+                    if (chat._id === message.chatId) {
                         return {
                             ...chat, //get all the properties of chat object.
-                            unreadMessageCount: (chat?.unreadMessageCount || 0) + 1,//increment the unread message count by 1.
+                            unReadMessageCount: (chat?.unReadMessageCount || 0) + 1,//increment the unread message count by 1.
                             lastMessage: message //update the last message with new message.
                         }
                     }
                     return chat;
                 })
                 allChats = updateChats;
+                console.log('check lastmessage',allChats)
             }
             //sorting chats based on last send and received message.
             //1. find the latest chat
@@ -143,6 +148,7 @@ function UserList({ searchKey ,socket}) {
             //3. crearte a new array with latest chat and all other chats.
 
             allChats = [latestChat, ...otherChats];
+            // console.log('allChats:', allChats)
             dispatch(setAllChats(allChats)); //update the all chats with new data.
         })
     }, [])

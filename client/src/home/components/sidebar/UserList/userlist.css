@@ -37,10 +37,10 @@
     @apply border-b-2 text-white bg-red-600 p-[10px]  
 }
 .message-timestamp{
-    @apply text-[13px];
+    @apply text-[13px] max-[1000px]:hidden;
 }
 .unread-message-counter{
-    @apply bg-red-600 text-white rounded-full w-[25px] h-[25px] text-center float-right font-bold text-[13px] pt-1;
+    @apply bg-red-600 text-white rounded-full w-[25px] h-[25px] text-center float-right font-bold text-[13px] pt-1 max-[1000px]:hidden;
 }
 
 

@@ -70,4 +70,7 @@
 .message-time {
     @apply w-fit text-[13px];
 }
+.typing-indicator{
+    @apply text-[14px] text-gray-500;
+}
 

@@ -47,6 +47,12 @@ app.use('/api/message',messageRouter);
             .to(data.members[1])
             .emit('clear-unread-message-count',data) // this is the method which is used to emit the message to the room.
         })
+        socket.on('user-typing',(data)=>{
+            console.log('user typing',data);
+            io.to(data.members[0])
+            .to(data.members[1])
+            .emit('started-typing',data)
+        })
 })
 module.exports=server;   //export app object
 

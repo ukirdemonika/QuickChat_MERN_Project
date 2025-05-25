@@ -11,15 +11,17 @@ import store from '../../../../redux/store';
 import { useContext } from 'react';
 import SocketContext from '../../../../context/socketContext';
 
-function ChatArea({socket}) {
+function ChatArea({ socket }) {
     // let socket = useContext(SocketContext);
-    const { selectedChat, user: currentUser, allChats } = useSelector(state => state.userReducer);
+    const { selectedChat, user, allChats } = useSelector(state => state.userReducer);
     //chat is selected chat, and user is current user.
     //selectedUserChat is the chat which is selected by the user, and it is the member of the selected chat.
-    const selectedUserChat = selectedChat.members.find(m => m._id !== currentUser._id);//get chat object of selected user. 
+    const selectedUserChat = selectedChat.members.find(m => m._id !== user._id);//get chat object of selected user. 
     const [message, setMessage] = react.useState('');
     const [allMessages, setAllMessages] = react.useState([]);
     const dispatch = useDispatch()
+
+    const [isTyping, setIsUserTyping] = react.useState(false);
 
     async function sendMessageFromApi() {
 
@@ -27,7 +29,7 @@ function ChatArea({socket}) {
 
             let newMessage = {
                 chatId: selectedChat._id,
-                sender: currentUser._id,
+                sender: user._id,
                 text: message
             }
             //send message to socket server with the new message object and members array.
@@ -106,7 +108,7 @@ function ChatArea({socket}) {
     useEffect(() => {
         getAllMessagesFromDB();
 
-        if (selectedChat?.lastMessage?.sender !== currentUser._id) {
+        if (selectedChat?.lastMessage?.sender !== user._id) {
             clearUnReadMessage();//clear the unread message count when user open the chat.
         }
 
@@ -116,7 +118,7 @@ function ChatArea({socket}) {
                 setAllMessages(prevmsg => [...prevmsg, message]); // Update the state with the new message
             }
             //
-            if (selectedChat._id === message.chatId && message.sender !== currentUser._id) {
+            if (selectedChat._id === message.chatId && message.sender !== user._id) {
                 clearUnReadMessage();//clear the unread message count when user open the chat.
 
             }
@@ -149,6 +151,18 @@ function ChatArea({socket}) {
 
         })
 
+        socket.on('started-typing',(data)=>{
+            if(selectedChat._id ===data.chatId && data.sender !== user._id){
+                // Show typing indicator
+                setIsUserTyping(true);
+                setTimeout(() => {
+                    setIsUserTyping(false); // Hide typing indicator after 2 seconds
+                }, 2000);
+            }
+
+            
+        })
+
     }, [selectedChat]); //when selected chat is changed, then get all messages from db.
 
 
@@ -157,7 +171,7 @@ function ChatArea({socket}) {
         let msgContainer = document.getElementById('chat-area');
         msgContainer.scrollTop = msgContainer.scrollHeight; // This means the scroll position of the chat area is set to its maximum height, effectively scrolling to the bottom.
         //scroll to the bottom of the chat area when new message is received.
-    }, [allMessages])
+    }, [allMessages, isTyping])
     return (
         <>
             {selectedChat && <div className='chat-container'>
@@ -167,7 +181,7 @@ function ChatArea({socket}) {
                 <div className='chat-area' id='chat-area'>
                     {allMessages.map(msg => {
 
-                        let isCurrentUserSender = msg.sender === currentUser._id; //check if the current user is sender of the message.
+                        let isCurrentUserSender = msg.sender === user._id; //check if the current user is sender of the message.
                         return <div className='message-container' style={isCurrentUserSender ? { justifyContent: 'end' } : { justifyContent: 'start' }} >
                             <div className='message-area'>
                                 <div className={isCurrentUserSender ? "send-message" : "receive-message"}>
@@ -183,14 +197,26 @@ function ChatArea({socket}) {
                                     )}
                                 </div>
                             </div>
+
                         </div>
+
                     })
                     }
                 </div>
+                <div>{isTyping && <i className='typing-indicator'>typing...</i>}</div>
                 <div className='send-message-div'>
                     <input type='text' className='send-message-input' placeholder='Type a message...'
                         value={message}
-                        onChange={(e) => { setMessage(e.target.value) }} />
+                        onChange={(e) => {
+                            setMessage(e.target.value)
+
+                            socket.emit('user-typing', {
+                                chatId: selectedChat._id,
+                                members: selectedChat.members.map(m => m._id),
+                                sender: user._id //currentuser id
+                            })
+                        }}
+                    />
                     <button className="fa fa-paper-plane send-message-btn"
                         aria-hidden="true" onClick={sendMessageFromApi}></button>
 
