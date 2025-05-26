@@ -4,8 +4,7 @@ import ChatArea from "./components/sidebar/chat/chat";
 import Sidebar from "./components/sidebar/sidebar";
 import './index.css';
 import io from  "socket.io-client";
-import { useContext, useEffect } from "react";
-import SocketContext from "../context/socketContext";
+import { useEffect } from "react";
 import { useState } from "react";
 
 const socket = io('http://localhost:5000');//connect to socket server

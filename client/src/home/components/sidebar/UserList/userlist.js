@@ -7,8 +7,7 @@ import { setAllChats, setSelectedChat } from "../../../../redux/userSlice";
 import moment from "moment";
 import { useEffect } from "react";
 import store from "../../../../redux/store";
-import { useContext } from "react";
-import SocketContext from "../../../../context/socketContext";
+
 
 function UserList({ searchKey ,socket,userList}) {
     //create alise for user as a currentUser

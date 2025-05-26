@@ -1,4 +1,5 @@
 import react, { useEffect } from 'react';
+import React, { useState, Suspense, lazy, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import './chat.css';
 import { createNewMessage, getAllMessages } from "../../../../apicalls/messages";
@@ -8,8 +9,8 @@ import moment from 'moment';
 import { clearUnreadMessageCount } from '../../../../apicalls/chat';
 import { setAllChats, setSelectedChat } from '../../../../redux/userSlice';
 import store from '../../../../redux/store';
-import { useContext } from 'react';
-import SocketContext from '../../../../context/socketContext';
+
+const EmojiPicker = lazy(() => import("emoji-picker-react"));
 
 function ChatArea({ socket }) {
     // let socket = useContext(SocketContext);
@@ -17,11 +18,12 @@ function ChatArea({ socket }) {
     //chat is selected chat, and user is current user.
     //selectedUserChat is the chat which is selected by the user, and it is the member of the selected chat.
     const selectedUserChat = selectedChat.members.find(m => m._id !== user._id);//get chat object of selected user. 
-    const [message, setMessage] = react.useState('');
-    const [allMessages, setAllMessages] = react.useState([]);
+    const [message, setMessage] = useState('');
+    const [allMessages, setAllMessages] = useState([]);
     const dispatch = useDispatch()
 
     const [isTyping, setIsUserTyping] = react.useState(false);
+    const [showEmojiPicker, setShowEmojiPicker] = react.useState(false);
 
     async function sendMessageFromApi() {
 
@@ -44,6 +46,7 @@ function ChatArea({ socket }) {
 
             if (response.success) {
                 setMessage('');
+                setShowEmojiPicker(false);
             }
         } catch (error) {
 
@@ -103,6 +106,33 @@ function ChatArea({ socket }) {
             toast.error(response.message);
         }
     }
+    //handle emoji click
+    const handleEmojiClick = useMemo(() => {
+        return (event) => {
+            setMessage((preMessage) => preMessage + event.emoji); //append the emoji to the message input.
+        }
+    }, [])
+    //emoji picker component
+    const emojiPicker = useMemo(() => {
+        return (
+            <div style={{
+                position: 'absolute',
+                bottom: '120px',
+                right: '30px',
+                zIndex: 1000
+            }}>
+                <Suspense fallback={<div>Loading Emoji Picker...</div>}>
+                    <EmojiPicker
+                        style={{ width: '300px', height: '400px' }}
+                        onEmojiClick={handleEmojiClick}
+                    />
+                </Suspense>
+            </div>
+
+        )
+    }, [handleEmojiClick])
+
+
     //get all messages from db when selected chat is changed & initially when page load.
     //selected chat is the chat which is selected by the user.
     useEffect(() => {
@@ -151,8 +181,8 @@ function ChatArea({ socket }) {
 
         })
 
-        socket.on('started-typing',(data)=>{
-            if(selectedChat._id ===data.chatId && data.sender !== user._id){
+        socket.on('started-typing', (data) => {
+            if (selectedChat._id === data.chatId && data.sender !== user._id) {
                 // Show typing indicator
                 setIsUserTyping(true);
                 setTimeout(() => {
@@ -160,7 +190,7 @@ function ChatArea({ socket }) {
                 }, 2000);
             }
 
-            
+
         })
 
     }, [selectedChat]); //when selected chat is changed, then get all messages from db.
@@ -202,8 +232,14 @@ function ChatArea({ socket }) {
 
                     })
                     }
+                    <div className='typing-indicator'>
+                        {isTyping && <i>typing...</i>}
+                    </div>
                 </div>
-                <div>{isTyping && <i className='typing-indicator'>typing...</i>}</div>
+
+                {showEmojiPicker && emojiPicker}
+
+
                 <div className='send-message-div'>
                     <input type='text' className='send-message-input' placeholder='Type a message...'
                         value={message}
@@ -217,6 +253,11 @@ function ChatArea({ socket }) {
                             })
                         }}
                     />
+                    <button
+                        className="fa fa-smile-o send-emoji-btn"
+                        aria-hidden="true"
+                        onClick={() => { setShowEmojiPicker(!showEmojiPicker) }}>
+                    </button>
                     <button className="fa fa-paper-plane send-message-btn"
                         aria-hidden="true" onClick={sendMessageFromApi}></button>
 

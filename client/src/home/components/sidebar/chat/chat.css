@@ -47,6 +47,9 @@
 .send-message-btn {
     @apply absolute right-[20px] text-[#e74c3c] bg-transparent border-none cursor-pointer text-[20px] pt-[8px];
 }
+.send-emoji-btn {
+    @apply absolute right-[50px] text-[#e74c3c] bg-transparent border-none cursor-pointer text-[20px] pt-[8px];
+}
 
 .message-container {
     @apply flex;
@@ -73,4 +76,5 @@
 .typing-indicator{
     @apply text-[14px] text-gray-500;
 }
+
 

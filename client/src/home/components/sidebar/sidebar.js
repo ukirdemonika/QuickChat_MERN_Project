@@ -2,8 +2,7 @@ import Search from "./search/search";
 import './sidebar.css'
 import { useState } from "react";
 import UserList from "./UserList/userlist";
-import { useContext } from "react";
-import SocketContext from "../../../context/socketContext";
+
 
 function Sidebar({socket, userList}) {
     // let socket=useContext(SocketContext);
